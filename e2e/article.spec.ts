@@ -1,10 +1,21 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Article Page', () => {
-  test('displays article content', async ({ page }) => {
+  async function navigateToArticle(page: import('@playwright/test').Page) {
     await page.goto('./');
     await page.locator('.series-card').first().click();
-    await page.locator('.article-card').first().click();
+
+    const articleCards = page.locator('.article-card');
+    const count = await articleCards.count();
+    if (count === 0) return false;
+
+    await articleCards.first().click();
+    return true;
+  }
+
+  test('displays article content', async ({ page }) => {
+    const hasArticle = await navigateToArticle(page);
+    test.skip(!hasArticle, 'No articles available from Notion');
 
     await expect(page.locator('.article-header h1')).toBeVisible();
     await expect(page.locator('.article-content')).toBeVisible();
@@ -12,9 +23,8 @@ test.describe('Article Page', () => {
   });
 
   test('has back link to series page', async ({ page }) => {
-    await page.goto('./');
-    await page.locator('.series-card').first().click();
-    await page.locator('.article-card').first().click();
+    const hasArticle = await navigateToArticle(page);
+    test.skip(!hasArticle, 'No articles available from Notion');
 
     await expect(page.locator('.back-link')).toBeVisible();
     await page.locator('.back-link').click();
@@ -22,9 +32,8 @@ test.describe('Article Page', () => {
   });
 
   test('images load without errors', async ({ page }) => {
-    await page.goto('./');
-    await page.locator('.series-card').first().click();
-    await page.locator('.article-card').first().click();
+    const hasArticle = await navigateToArticle(page);
+    test.skip(!hasArticle, 'No articles available from Notion');
 
     const images = page.locator('.article-content img');
     const count = await images.count();
@@ -39,9 +48,8 @@ test.describe('Article Page', () => {
   });
 
   test('has JSON-LD structured data', async ({ page }) => {
-    await page.goto('./');
-    await page.locator('.series-card').first().click();
-    await page.locator('.article-card').first().click();
+    const hasArticle = await navigateToArticle(page);
+    test.skip(!hasArticle, 'No articles available from Notion');
 
     const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
     expect(jsonLd).toBeTruthy();
@@ -53,9 +61,8 @@ test.describe('Article Page', () => {
 
   test('responsive layout on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto('./');
-    await page.locator('.series-card').first().click();
-    await page.locator('.article-card').first().click();
+    const hasArticle = await navigateToArticle(page);
+    test.skip(!hasArticle, 'No articles available from Notion');
 
     await expect(page.locator('.article-content')).toBeVisible();
     const content = page.locator('.article-content');
