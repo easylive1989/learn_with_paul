@@ -1,0 +1,32 @@
+---
+import { loadConfig } from '../lib/config';
+const config = loadConfig();
+
+const iconMap: Record<string, string> = {
+  github: 'GitHub',
+  linkedin: 'LinkedIn',
+  twitter: 'Twitter/X',
+  email: 'Email',
+};
+---
+
+<div class="author-card">
+  <img
+    src={`${import.meta.env.BASE_URL}${config.author.avatar}`}
+    alt={config.author.name}
+    class="author-avatar"
+    width="80"
+    height="80"
+  />
+  <div class="author-info">
+    <h2 class="author-name">{config.author.name}</h2>
+    <p class="author-bio">{config.author.bio}</p>
+    <div class="author-links">
+      {config.author.links.map((link) => (
+        <a href={link.url} target="_blank" rel="noopener noreferrer">
+          {iconMap[link.type] ?? link.type}
+        </a>
+      ))}
+    </div>
+  </div>
+</div>

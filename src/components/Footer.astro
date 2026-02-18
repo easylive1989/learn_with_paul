@@ -1,0 +1,24 @@
+---
+import { loadConfig } from '../lib/config';
+const config = loadConfig();
+
+const iconMap: Record<string, string> = {
+  github: 'GitHub',
+  linkedin: 'LinkedIn',
+  twitter: 'Twitter/X',
+  email: 'Email',
+};
+---
+
+<footer>
+  <div class="footer-links">
+    {config.author.links.map((link) => (
+      <a href={link.url} target="_blank" rel="noopener noreferrer">
+        {iconMap[link.type] ?? link.type}
+      </a>
+    ))}
+  </div>
+  <p class="copyright">
+    &copy; {new Date().getFullYear()} {config.author.name}
+  </p>
+</footer>

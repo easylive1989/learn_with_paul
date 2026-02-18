@@ -1,0 +1,54 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { loadConfig } from '../lib/config';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const config = loadConfig();
+const {
+  title = config.site.title,
+  description = config.site.description,
+  ogImage,
+} = Astro.props;
+
+const pageTitle = title === config.site.title
+  ? title
+  : `${title} | ${config.site.title}`;
+const canonicalUrl = new URL(Astro.url.pathname, config.site.url);
+---
+
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl.href} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl.href} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

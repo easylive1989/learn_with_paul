@@ -1,0 +1,10 @@
+---
+import { loadConfig } from '../lib/config';
+const config = loadConfig();
+---
+
+<header>
+  <nav>
+    <a href={import.meta.env.BASE_URL} class="site-title">{config.site.title}</a>
+  </nav>
+</header>
