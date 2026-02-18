@@ -6,9 +6,19 @@ const { block } = Astro.props;
 const bookmark = (block as any).bookmark;
 const url = bookmark.url;
 const caption = bookmark.caption?.map((t: any) => t.plain_text).join('') ?? '';
+const isDartPad = url.includes('dartpad.dev');
 ---
-<div class="bookmark">
-  <a href={url} target="_blank" rel="noopener noreferrer">
-    {caption || url}
-  </a>
-</div>
+{isDartPad ? (
+  <div class="dartpad-container">
+    <iframe
+      src={url}
+      loading="lazy"
+    />
+  </div>
+) : (
+  <div class="bookmark">
+    <a href={url} target="_blank" rel="noopener noreferrer">
+      {caption || url}
+    </a>
+  </div>
+)}
