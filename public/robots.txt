@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://anthropics.github.io/learn_with_paul/sitemap-index.xml
