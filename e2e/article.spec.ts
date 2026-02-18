@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Article Page', () => {
   test('displays article content', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('./');
     await page.locator('.series-card').first().click();
     await page.locator('.article-card').first().click();
 
@@ -12,7 +12,7 @@ test.describe('Article Page', () => {
   });
 
   test('has back link to series page', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('./');
     await page.locator('.series-card').first().click();
     await page.locator('.article-card').first().click();
 
@@ -22,7 +22,7 @@ test.describe('Article Page', () => {
   });
 
   test('images load without errors', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('./');
     await page.locator('.series-card').first().click();
     await page.locator('.article-card').first().click();
 
@@ -39,7 +39,7 @@ test.describe('Article Page', () => {
   });
 
   test('has JSON-LD structured data', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('./');
     await page.locator('.series-card').first().click();
     await page.locator('.article-card').first().click();
 
@@ -53,7 +53,7 @@ test.describe('Article Page', () => {
 
   test('responsive layout on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto('/');
+    await page.goto('./');
     await page.locator('.series-card').first().click();
     await page.locator('.article-card').first().click();
 
