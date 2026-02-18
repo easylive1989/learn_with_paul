@@ -6,4 +6,9 @@ export default defineConfig({
   base: '/learn_with_paul',
   integrations: [sitemap()],
   output: 'static',
+  vite: {
+    ssr: {
+      external: ['@notionhq/client'],
+    },
+  },
 });

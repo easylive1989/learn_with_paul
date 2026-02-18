@@ -1,13 +1,15 @@
+import 'dotenv/config';
 import { Client } from '@notionhq/client';
 import { loadConfig } from './config';
 import { fetchDatabase, fetchPageBlocks, type Article, type NotionBlock } from './notion';
 import { replaceImageUrls, downloadImages } from './images';
 import path from 'node:path';
 
-function getNotionClient(): Client {
-  const token = import.meta.env?.NOTION_API_KEY ?? process.env.NOTION_API_KEY;
+function getNotionClient(): Client | null {
+  const token = process.env.NOTION_API_KEY;
   if (!token) {
-    throw new Error('NOTION_API_KEY environment variable is required');
+    console.warn('NOTION_API_KEY not set — returning empty data');
+    return null;
   }
   return new Client({ auth: token });
 }
@@ -23,6 +25,11 @@ export interface Series {
 export async function getAllSeries(): Promise<Series[]> {
   const config = loadConfig();
   const client = getNotionClient();
+  if (!client) {
+    return config.notion.databases.map((db) => ({
+      id: db.id, name: db.name, slug: db.slug, description: db.description, articleCount: 0,
+    }));
+  }
 
   const series: Series[] = [];
 
@@ -43,6 +50,7 @@ export async function getAllSeries(): Promise<Series[]> {
 export async function getSeriesArticles(seriesSlug: string): Promise<Article[]> {
   const config = loadConfig();
   const client = getNotionClient();
+  if (!client) return [];
   const db = config.notion.databases.find((d) => d.slug === seriesSlug);
 
   if (!db) return [];
@@ -63,6 +71,7 @@ export async function getArticle(
 ): Promise<ArticleWithContent | null> {
   const config = loadConfig();
   const client = getNotionClient();
+  if (!client) return null;
   const db = config.notion.databases.find((d) => d.slug === seriesSlug);
 
   if (!db) return null;
@@ -91,6 +100,7 @@ export async function getAllArticlesForStaticPaths(): Promise<
 > {
   const config = loadConfig();
   const client = getNotionClient();
+  if (!client) return [];
   const paths: { seriesSlug: string; articleSlug: string }[] = [];
 
   for (const db of config.notion.databases) {
