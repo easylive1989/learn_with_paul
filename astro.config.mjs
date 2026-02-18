@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://anthropics.github.io',
-  base: '/learn_with_paul',
+  base: '/learn_with_paul/',
   integrations: [sitemap()],
   output: 'static',
   vite: {
