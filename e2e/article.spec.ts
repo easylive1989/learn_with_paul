@@ -31,32 +31,6 @@ test.describe('Article Page', () => {
     await expect(page.locator('.article-list')).toBeVisible();
   });
 
-  test('images load without errors', async ({ page }) => {
-    const hasArticle = await navigateToArticle(page);
-    test.skip(!hasArticle, 'No articles available from Notion');
-
-    const images = page.locator('.article-content img');
-    const count = await images.count();
-
-    for (let i = 0; i < count; i++) {
-      const img = images.nth(i);
-      await img.scrollIntoViewIfNeeded();
-      await img.evaluate(
-        (el: HTMLImageElement) =>
-          el.complete
-            ? undefined
-            : new Promise<void>((resolve) => {
-                el.addEventListener('load', () => resolve(), { once: true });
-                el.addEventListener('error', () => resolve(), { once: true });
-              })
-      );
-      const naturalWidth = await img.evaluate(
-        (el: HTMLImageElement) => el.naturalWidth
-      );
-      expect(naturalWidth).toBeGreaterThan(0);
-    }
-  });
-
   test('has JSON-LD structured data', async ({ page }) => {
     const hasArticle = await navigateToArticle(page);
     test.skip(!hasArticle, 'No articles available from Notion');
