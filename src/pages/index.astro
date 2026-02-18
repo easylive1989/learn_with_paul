@@ -1,13 +1,25 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AuthorCard from '../components/AuthorCard.astro';
+import SeriesCard from '../components/SeriesCard.astro';
+import { getAllSeries } from '../lib/data';
+
+const series = await getAllSeries();
 ---
 
-<html lang="zh-TW">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Learn with Paul</title>
-  </head>
-  <body>
-    <h1>Learn with Paul</h1>
-  </body>
-</html>
+<BaseLayout>
+  <AuthorCard />
+
+  <section class="series-list">
+    <h1>文章系列</h1>
+    {series.length === 0 && <p>目前沒有文章系列。</p>}
+    {series.map((s) => (
+      <SeriesCard
+        name={s.name}
+        slug={s.slug}
+        description={s.description}
+        articleCount={s.articleCount}
+      />
+    ))}
+  </section>
+</BaseLayout>

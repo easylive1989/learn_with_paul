@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { loadConfig } from '../../lib/config';
+import { getSeriesArticles } from '../../lib/data';
+
+export async function getStaticPaths() {
+  const config = loadConfig();
+  return config.notion.databases.map((db) => ({
+    params: { series: db.slug },
+    props: { seriesName: db.name, seriesDescription: db.description },
+  }));
+}
+
+const { series } = Astro.params;
+const { seriesName, seriesDescription } = Astro.props;
+const articles = await getSeriesArticles(series!);
+---
+
+<BaseLayout title={seriesName} description={seriesDescription}>
+  <section class="series-page">
+    <a href={import.meta.env.BASE_URL} class="back-link">&larr; 回首頁</a>
+    <h1>{seriesName}</h1>
+    <p class="series-description">{seriesDescription}</p>
+
+    <div class="article-list">
+      {articles.length === 0 && <p>目前沒有文章。</p>}
+      {articles.map((article) => (
+        <ArticleCard
+          title={article.title}
+          slug={article.slug}
+          seriesSlug={series!}
+          description={article.description}
+          publishedDate={article.publishedDate}
+          tags={article.tags}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

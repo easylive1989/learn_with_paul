@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NotionRenderer from '../../components/notion/NotionRenderer.astro';
+import { loadConfig } from '../../lib/config';
+import { getArticle, getAllArticlesForStaticPaths, getSeriesArticles } from '../../lib/data';
+
+export async function getStaticPaths() {
+  const paths = await getAllArticlesForStaticPaths();
+  return paths.map((p) => ({
+    params: { series: p.seriesSlug, slug: p.articleSlug },
+  }));
+}
+
+const { series, slug } = Astro.params;
+const data = await getArticle(series!, slug!);
+
+if (!data) {
+  return Astro.redirect('/404');
+}
+
+const { article, blocks, seriesSlug, seriesName } = data;
+
+const allArticles = await getSeriesArticles(seriesSlug);
+const currentIndex = allArticles.findIndex((a) => a.slug === slug);
+const prevArticle = currentIndex < allArticles.length - 1 ? allArticles[currentIndex + 1] : null;
+const nextArticle = currentIndex > 0 ? allArticles[currentIndex - 1] : null;
+
+const formattedDate = new Date(article.publishedDate).toLocaleDateString('zh-TW', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const config = loadConfig();
+---
+
+<BaseLayout title={article.title} description={article.description}>
+  <article class="article-page">
+    <a href={`${import.meta.env.BASE_URL}${seriesSlug}/`} class="back-link">&larr; {seriesName}</a>
+
+    <header class="article-header">
+      <h1>{article.title}</h1>
+      <div class="article-meta">
+        <time datetime={article.publishedDate}>{formattedDate}</time>
+        {article.tags.length > 0 && (
+          <div class="article-tags">
+            {article.tags.map((tag) => <span class="tag">{tag}</span>)}
+          </div>
+        )}
+      </div>
+    </header>
+
+    <div class="article-content">
+      <NotionRenderer blocks={blocks} />
+    </div>
+
+    <nav class="article-nav">
+      {prevArticle && (
+        <a href={`${import.meta.env.BASE_URL}${seriesSlug}/${prevArticle.slug}/`} class="nav-prev">
+          &larr; {prevArticle.title}
+        </a>
+      )}
+      {nextArticle && (
+        <a href={`${import.meta.env.BASE_URL}${seriesSlug}/${nextArticle.slug}/`} class="nav-next">
+          {nextArticle.title} &rarr;
+        </a>
+      )}
+    </nav>
+  </article>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": article.title,
+    "description": article.description,
+    "datePublished": article.publishedDate,
+    "author": {
+      "@type": "Person",
+      "name": config.author.name,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": config.site.title,
+    },
+  })} />
+</BaseLayout>
