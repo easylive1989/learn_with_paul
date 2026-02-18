@@ -15,10 +15,14 @@ author:
 
 notion:
   databases:
-    - id: "placeholder-database-id"
-      name: "示範系列"
-      slug: "demo-series"
-      description: "這是一個示範系列"
+    - id: "41d5ffc8ef2d4f7c80d812ba2db5ce8d"
+      name: "系列一"
+      slug: "series-1"
+      description: "第一個系列"
+    - id: "76aeb1020ede4545bcefe80c245d03fb"
+      name: "系列二"
+      slug: "series-2"
+      description: "第二個系列"
 
 build:
   schedule: "0 0 * * *"

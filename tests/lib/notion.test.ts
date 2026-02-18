@@ -3,7 +3,7 @@ import { fetchDatabase, fetchPageBlocks } from '../../src/lib/notion';
 
 function createMockClient() {
   return {
-    databases: {
+    dataSources: {
       query: vi.fn(),
     },
     blocks: {
@@ -34,16 +34,16 @@ describe('fetchDatabase', () => {
     ];
 
     const mockClient = createMockClient();
-    mockClient.databases.query.mockResolvedValue({
+    mockClient.dataSources.query.mockResolvedValue({
       results: mockPages,
       has_more: false,
     });
 
     const articles = await fetchDatabase(mockClient as any, 'db-id-1');
 
-    expect(mockClient.databases.query).toHaveBeenCalledWith(
+    expect(mockClient.dataSources.query).toHaveBeenCalledWith(
       expect.objectContaining({
-        database_id: 'db-id-1',
+        data_source_id: 'db-id-1',
         filter: expect.objectContaining({
           property: 'Status',
         }),
