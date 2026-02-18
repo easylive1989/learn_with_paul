@@ -1,0 +1,13 @@
+---
+import { renderRichText } from '../../lib/richtext';
+import NotionRenderer from './NotionRenderer.astro';
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const text = renderRichText((block as any).toggle.rich_text);
+---
+<details>
+  <summary set:html={text} />
+  {block.children && <NotionRenderer blocks={block.children} />}
+</details>

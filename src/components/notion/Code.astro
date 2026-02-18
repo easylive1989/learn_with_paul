@@ -1,0 +1,17 @@
+---
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const code = (block as any).code;
+const language = code.language || 'plain text';
+const text = code.rich_text.map((t: any) => t.plain_text).join('');
+const caption = code.caption?.map((t: any) => t.plain_text).join('') ?? '';
+---
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-language">{language}</span>
+  </div>
+  <pre><code class={`language-${language}`}>{text}</code></pre>
+  {caption && <p class="code-caption">{caption}</p>}
+</div>

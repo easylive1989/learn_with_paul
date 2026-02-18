@@ -1,0 +1,19 @@
+---
+import { renderRichText } from '../../lib/richtext';
+import NotionRenderer from './NotionRenderer.astro';
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { items: NotionBlock[]; }
+const { items } = Astro.props;
+---
+<ul>
+  {items.map((item) => {
+    const text = renderRichText((item as any).bulleted_list_item.rich_text);
+    return (
+      <li>
+        <span set:html={text} />
+        {item.children && <NotionRenderer blocks={item.children} />}
+      </li>
+    );
+  })}
+</ul>

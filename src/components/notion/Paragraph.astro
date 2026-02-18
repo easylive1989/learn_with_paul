@@ -1,0 +1,9 @@
+---
+import { renderRichText } from '../../lib/richtext';
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const text = renderRichText((block as any).paragraph.rich_text);
+---
+<p set:html={text} />

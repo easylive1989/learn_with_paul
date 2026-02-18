@@ -1,0 +1,28 @@
+---
+import { renderRichText } from '../../lib/richtext';
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const table = (block as any).table;
+const hasHeader = table.has_column_header;
+const rows = block.children ?? [];
+---
+<div class="table-wrapper">
+  <table>
+    {rows.map((row: any, i: number) => {
+      const cells = row.table_row.cells;
+      const isHeader = hasHeader && i === 0;
+      return (
+        <tr>
+          {cells.map((cell: any) => {
+            const content = renderRichText(cell);
+            return isHeader
+              ? <th set:html={content} />
+              : <td set:html={content} />;
+          })}
+        </tr>
+      );
+    })}
+  </table>
+</div>

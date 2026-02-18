@@ -1,0 +1,14 @@
+---
+import { renderRichText } from '../../lib/richtext';
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const level = block.type.replace('heading_', '');
+const data = (block as any)[block.type];
+const text = renderRichText(data.rich_text);
+const id = data.rich_text.map((t: any) => t.plain_text).join('').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+---
+{level === '1' && <h2 id={id} set:html={text} />}
+{level === '2' && <h3 id={id} set:html={text} />}
+{level === '3' && <h4 id={id} set:html={text} />}

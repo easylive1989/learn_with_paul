@@ -1,0 +1,13 @@
+---
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const img = (block as any).image;
+const url = img?.file?.url ?? img?.external?.url ?? '';
+const caption = img.caption?.map((t: any) => t.plain_text).join('') ?? '';
+---
+<figure>
+  <img src={url} alt={caption || 'Article image'} loading="lazy" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

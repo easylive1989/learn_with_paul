@@ -1,0 +1,14 @@
+---
+import { renderRichText } from '../../lib/richtext';
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const callout = (block as any).callout;
+const icon = callout.icon?.emoji ?? '';
+const text = renderRichText(callout.rich_text);
+---
+<div class="callout">
+  {icon && <span class="callout-icon">{icon}</span>}
+  <div class="callout-content" set:html={text} />
+</div>

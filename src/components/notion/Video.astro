@@ -1,0 +1,45 @@
+---
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const video = (block as any).video;
+const url = video?.file?.url ?? video?.external?.url ?? '';
+const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
+const isVimeo = url.includes('vimeo.com');
+
+function getYoutubeId(url: string): string {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  return match?.[1] ?? '';
+}
+
+function getVimeoId(url: string): string {
+  const match = url.match(/vimeo\.com\/(\d+)/);
+  return match?.[1] ?? '';
+}
+---
+<div class="video-container">
+  {isYoutube && (
+    <iframe
+      src={`https://www.youtube.com/embed/${getYoutubeId(url)}`}
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy"
+    />
+  )}
+  {isVimeo && (
+    <iframe
+      src={`https://player.vimeo.com/video/${getVimeoId(url)}`}
+      frameborder="0"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowfullscreen
+      loading="lazy"
+    />
+  )}
+  {!isYoutube && !isVimeo && (
+    <video controls preload="metadata">
+      <source src={url} />
+    </video>
+  )}
+</div>

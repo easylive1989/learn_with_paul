@@ -1,0 +1,14 @@
+---
+import type { NotionBlock } from '../../lib/notion';
+
+interface Props { block: NotionBlock; }
+const { block } = Astro.props;
+const bookmark = (block as any).bookmark;
+const url = bookmark.url;
+const caption = bookmark.caption?.map((t: any) => t.plain_text).join('') ?? '';
+---
+<div class="bookmark">
+  <a href={url} target="_blank" rel="noopener noreferrer">
+    {caption || url}
+  </a>
+</div>
