@@ -19,6 +19,19 @@ export interface NotionBlock {
   [key: string]: unknown;
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fff]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getTitleText(props: any): string {
+  // Try common title property names
+  const titleProp = props.Title ?? props.Name ?? props.name;
+  return titleProp?.title?.[0]?.plain_text ?? 'Untitled';
+}
+
 export async function fetchDatabase(
   client: Client,
   databaseId: string,
@@ -28,27 +41,27 @@ export async function fetchDatabase(
 
   try {
     do {
-      const response = await client.dataSources.query({
-        data_source_id: databaseId,
+      const response = await client.databases.query({
+        database_id: databaseId,
         filter: {
-          property: 'Status',
-          select: { equals: 'Published' },
+          property: '狀態',
+          select: { equals: '完成' },
         },
-        sorts: [{ property: 'PublishedDate', direction: 'descending' }],
         start_cursor: cursor,
       });
 
       for (const page of response.results) {
         const p = page as any;
         const props = p.properties;
+        const title = getTitleText(props);
 
         pages.push({
           id: p.id,
-          title: props.Title?.title?.[0]?.plain_text ?? 'Untitled',
-          slug: props.Slug?.rich_text?.[0]?.plain_text ?? p.id,
+          title,
+          slug: props.Slug?.rich_text?.[0]?.plain_text ?? (slugify(title) || p.id),
           description: props.Description?.rich_text?.[0]?.plain_text ?? '',
           tags: props.Tags?.multi_select?.map((t: any) => t.name) ?? [],
-          publishedDate: props.PublishedDate?.date?.start ?? '',
+          publishedDate: props.PublishedDate?.date?.start ?? p.created_time?.slice(0, 10) ?? '',
           order: props.Order?.number ?? null,
           cover: props.Cover?.files?.[0]?.file?.url
             ?? props.Cover?.files?.[0]?.external?.url

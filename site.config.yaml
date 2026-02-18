@@ -16,13 +16,13 @@ author:
 notion:
   databases:
     - id: "41d5ffc8ef2d4f7c80d812ba2db5ce8d"
-      name: "系列一"
+      name: "30 天輕鬆學會 Flutter 測試"
       slug: "series-1"
-      description: "第一個系列"
+      description: "從零開始學習 Flutter 測試"
     - id: "76aeb1020ede4545bcefe80c245d03fb"
-      name: "系列二"
+      name: "Flutter 開發設計雜談"
       slug: "series-2"
-      description: "第二個系列"
+      description: "Flutter 開發中的設計思考與實踐"
 
 build:
   schedule: "0 0 * * *"

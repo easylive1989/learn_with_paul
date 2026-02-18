@@ -3,7 +3,7 @@ import { fetchDatabase, fetchPageBlocks } from '../../src/lib/notion';
 
 function createMockClient() {
   return {
-    dataSources: {
+    databases: {
       query: vi.fn(),
     },
     blocks: {
@@ -15,44 +15,39 @@ function createMockClient() {
 }
 
 describe('fetchDatabase', () => {
-  it('queries database and returns published articles', async () => {
+  it('queries database and returns articles with 完成 status', async () => {
     const mockPages = [
       {
         id: 'page-1',
+        created_time: '2026-01-15T00:00:00.000Z',
         properties: {
-          Title: { title: [{ plain_text: 'First Post' }] },
-          Slug: { rich_text: [{ plain_text: 'first-post' }] },
-          Description: { rich_text: [{ plain_text: 'My first post' }] },
-          Tags: { multi_select: [{ name: 'typescript' }] },
-          PublishedDate: { date: { start: '2026-01-15' } },
-          Status: { select: { name: 'Published' } },
-          Order: { number: 1 },
-          Cover: { files: [] },
+          Name: { title: [{ plain_text: 'First Post' }] },
+          '狀態': { select: { name: '完成' } },
         },
         cover: null,
       },
     ];
 
     const mockClient = createMockClient();
-    mockClient.dataSources.query.mockResolvedValue({
+    mockClient.databases.query.mockResolvedValue({
       results: mockPages,
       has_more: false,
     });
 
     const articles = await fetchDatabase(mockClient as any, 'db-id-1');
 
-    expect(mockClient.dataSources.query).toHaveBeenCalledWith(
+    expect(mockClient.databases.query).toHaveBeenCalledWith(
       expect.objectContaining({
-        data_source_id: 'db-id-1',
+        database_id: 'db-id-1',
         filter: expect.objectContaining({
-          property: 'Status',
+          property: '狀態',
         }),
       })
     );
     expect(articles).toHaveLength(1);
     expect(articles[0].title).toBe('First Post');
     expect(articles[0].slug).toBe('first-post');
-    expect(articles[0].tags).toEqual(['typescript']);
+    expect(articles[0].publishedDate).toBe('2026-01-15');
   });
 });
 
