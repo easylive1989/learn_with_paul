@@ -1,0 +1,24 @@
+site:
+  title: "Learn with Paul"
+  description: "Paul 的技術學習筆記"
+  url: "https://anthropics.github.io/learn_with_paul"
+
+author:
+  name: "Paul"
+  avatar: "/images/avatar.jpg"
+  bio: "技術愛好者"
+  links:
+    - type: github
+      url: "https://github.com/anthropics"
+    - type: email
+      url: "mailto:hello@example.com"
+
+notion:
+  databases:
+    - id: "placeholder-database-id"
+      name: "示範系列"
+      slug: "demo-series"
+      description: "這是一個示範系列"
+
+build:
+  schedule: "0 0 * * *"
