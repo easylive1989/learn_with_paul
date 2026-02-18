@@ -40,6 +40,16 @@ test.describe('Article Page', () => {
 
     for (let i = 0; i < count; i++) {
       const img = images.nth(i);
+      await img.scrollIntoViewIfNeeded();
+      await img.evaluate(
+        (el: HTMLImageElement) =>
+          el.complete
+            ? undefined
+            : new Promise<void>((resolve) => {
+                el.addEventListener('load', () => resolve(), { once: true });
+                el.addEventListener('error', () => resolve(), { once: true });
+              })
+      );
       const naturalWidth = await img.evaluate(
         (el: HTMLImageElement) => el.naturalWidth
       );
