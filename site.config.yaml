@@ -1,7 +1,7 @@
 site:
   title: "Learn with Paul"
   description: "Paul 的技術學習筆記"
-  url: "https://anthropics.github.io/learn_with_paul"
+  url: "https://easylive1989.github.io/learn_with_paul"
 
 author:
   name: "Paul"
@@ -9,7 +9,7 @@ author:
   bio: "技術愛好者"
   links:
     - type: github
-      url: "https://github.com/anthropics"
+      url: "https://github.com/easylive1989"
     - type: email
       url: "mailto:hello@example.com"
 
