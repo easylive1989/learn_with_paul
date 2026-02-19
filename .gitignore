@@ -20,9 +20,6 @@ pnpm-debug.log*
 # astro
 .astro/
 
-# notion images (downloaded at build time)
-public/images/
-
 # playwright
 test-results/
 playwright-report/
