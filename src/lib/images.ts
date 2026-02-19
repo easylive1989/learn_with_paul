@@ -61,16 +61,20 @@ export function replaceImageUrls(
 export async function downloadImages(
   imageMap: ImageMap,
   publicDir: string,
+  distDir?: string,
 ): Promise<void> {
   for (const [remoteUrl, localPath] of Object.entries(imageMap)) {
-    const filePath = path.join(publicDir, localPath);
-    const dir = path.dirname(filePath);
+    const publicFilePath = path.join(publicDir, localPath);
 
-    if (fs.existsSync(filePath)) {
+    if (fs.existsSync(publicFilePath)) {
+      // Already downloaded — but still copy to dist/ if needed (build mode)
+      if (distDir) {
+        copyToDist(publicFilePath, path.join(distDir, localPath));
+      }
       continue;
     }
 
-    fs.mkdirSync(dir, { recursive: true });
+    fs.mkdirSync(path.dirname(publicFilePath), { recursive: true });
 
     try {
       const response = await fetch(remoteUrl);
@@ -79,9 +83,23 @@ export async function downloadImages(
         continue;
       }
       const buffer = Buffer.from(await response.arrayBuffer());
-      fs.writeFileSync(filePath, buffer);
+      fs.writeFileSync(publicFilePath, buffer);
+
+      // Astro copies public/ to dist/ before page generation, so images
+      // downloaded during rendering must also be written to dist/ directly.
+      if (distDir) {
+        const distFilePath = path.join(distDir, localPath);
+        fs.mkdirSync(path.dirname(distFilePath), { recursive: true });
+        fs.writeFileSync(distFilePath, buffer);
+      }
     } catch (err) {
       console.warn(`Failed to download image: ${remoteUrl}`, err);
     }
   }
+}
+
+function copyToDist(src: string, dest: string): void {
+  if (fs.existsSync(dest)) return;
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(src, dest);
 }

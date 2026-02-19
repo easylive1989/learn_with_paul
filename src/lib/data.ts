@@ -85,7 +85,8 @@ export async function getArticle(
   const { blocks, imageMap } = replaceImageUrls(rawBlocks, seriesSlug, articleSlug);
 
   const publicDir = path.resolve(process.cwd(), 'public');
-  await downloadImages(imageMap, publicDir);
+  const distDir = path.resolve(process.cwd(), 'dist');
+  await downloadImages(imageMap, publicDir, distDir);
 
   return {
     article,
